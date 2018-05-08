@@ -40,13 +40,37 @@ public class GlobeSortClient {
 
     public void run(Integer[] values) throws Exception {
         System.out.println("Pinging " + serverStr + "...");
+        long t0 = System.nanoTime();
         serverStub.ping(Empty.newBuilder().build());
-        System.out.println("Ping successful.");
+        long t1 = System.nanoTime();
+        long t = (double)(t1-t0)/1000000000.0;
+        t = t/2; //one-way throughput
+
+        System.out.("Ping successful.");
+        System.out.println("Latency is " + t + ".\n");
 
         System.out.println("Requesting server to sort array");
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
+
+        //TODO: measure total invocation time
+        t0 = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
-        System.out.println("Sorted array");
+        t1 = System.nanoTime();
+
+        System.out.println("Sorted array.\n");
+        t = (double)(t1-t0)/1000000000.0;
+        System.out.println("Total invocation time of sortIntegers: " + t + " seconds.\n");
+
+        double minusTime = response.getTime();
+        System.out.println("Just sorting took this long: (response.getTime) " + minusTime + " seconds.\n");
+        
+        double appTP = values.length/time;
+        System.out.println("Application Throughput, NumSorted/Second, is: " + appTP + ".\n" );
+
+        double netTP = time - response;
+        netTP  = 4*values.length/netTP; //bytes per second
+        netTP /= 2; //one way throuhgout
+        System.out.println("One-Way network throughput is " + netTP + ".\n");
     }
 
     public void shutdown() throws InterruptedException {
