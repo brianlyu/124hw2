@@ -46,7 +46,7 @@ public class GlobeSortClient {
         double t = (double)(t1-t0)/1000000000.0;
         t = t/2; //one-way
 
-        System.out.("Ping successful.");
+        System.out.println("Ping successful.");
         System.out.println("Latency is " + t + ".\n");
 
         System.out.println("Requesting server to sort array");
