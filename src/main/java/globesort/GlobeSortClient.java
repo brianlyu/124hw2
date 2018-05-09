@@ -43,8 +43,8 @@ public class GlobeSortClient {
         long t0 = System.nanoTime();
         serverStub.ping(Empty.newBuilder().build());
         long t1 = System.nanoTime();
-        long t = (double)(t1-t0)/1000000000.0;
-        t = t/2; //one-way throughput
+        double t = (double)(t1-t0)/1000000000.0;
+        t = t/2; //one-way
 
         System.out.("Ping successful.");
         System.out.println("Latency is " + t + ".\n");
@@ -64,10 +64,10 @@ public class GlobeSortClient {
         double minusTime = response.getTime();
         System.out.println("Just sorting took this long: (response.getTime) " + minusTime + " seconds.\n");
         
-        double appTP = values.length/time;
+        double appTP = values.length/t;
         System.out.println("Application Throughput, NumSorted/Second, is: " + appTP + ".\n" );
 
-        double netTP = time - response;
+        double netTP = t - minusTime;
         netTP  = 4*values.length/netTP; //bytes per second
         netTP /= 2; //one way throuhgout
         System.out.println("One-Way network throughput is " + netTP + ".\n");
